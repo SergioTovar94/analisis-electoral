@@ -28,6 +28,7 @@ información estratégica accionable.
 ## 4. Operaciones principales
 
 - Ingesta de datos desde archivos
+- Mapping interactivo de columnas
 - Validación de calidad de datos
 - Normalización de identificadores geográficos
 - Agregación de resultados por puesto de votación

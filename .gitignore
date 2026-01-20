@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter / notebooks
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Archivos grandes de datos brutos
+data_raw/*
+
+# Logs o temporales
+*.log

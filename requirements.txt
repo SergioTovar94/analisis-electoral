@@ -1,0 +1,5 @@
+polars>=0.18
+pandas>=2.1
+sqlalchemy>=2.1
+psycopg2-binary>=2.9
+openpyxl>=3.1

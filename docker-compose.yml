@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: electoral_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: analisis_electoral
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d 
+
+  python:
+    build: .
+    container_name: etl_python
+    volumes:
+      - .:/app
+      - ./data_raw:/app/data_raw
+    working_dir: /app
+    command: tail -f /dev/null
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:

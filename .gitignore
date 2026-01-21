@@ -1,17 +1,29 @@
+# ======================
 # Python
+# ======================
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
+# ======================
 # Jupyter / notebooks
+# ======================
 .ipynb_checkpoints/
 
+# ======================
 # VS Code
+# ======================
 .vscode/
 
-# Archivos grandes de datos brutos
-data_raw/*
+# ======================
+# Datos (NO versionar)
+# ======================
+/data_raw/
+/data_processed/
+/data_temp/
 
-# Logs o temporales
+# ======================
+# Logs / temporales
+# ======================
 *.log

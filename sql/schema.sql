@@ -29,27 +29,35 @@ CREATE TABLE resultado_mesa (
     eleccion_id INT REFERENCES eleccion(id),
     puesto_id INT REFERENCES puesto_votacion(id),
     mesa TEXT,
+    cod_candidato TEXT,
     candidato TEXT,
-    votos INT,
-    votos_nulos INT,
-    votos_blancos INT
+    votos INT NOT NULL
 );
+
 
 CREATE TABLE resultado_puesto (
-    puesto_id INT REFERENCES puesto_votacion(id),
-    eleccion_id INT REFERENCES eleccion(id),
+    anio_eleccion INTEGER NOT NULL,
+    cod_departamento INTEGER,
+    departamento TEXT,
+    cod_municipio INTEGER,
+    municipio TEXT,
+    cod_puesto INTEGER,
+    puesto_votacion TEXT,
+    cod_candidato INTEGER,
     candidato TEXT,
-    votos_totales INT,
-    votos_nulos INT,
-    votos_blancos INT,
-    PRIMARY KEY (puesto_id, eleccion_id, candidato)
+    votos_totales INTEGER NOT NULL
 );
 
-CREATE INDEX idx_resultado_puesto_eleccion
-ON resultado_puesto (eleccion_id);
 
-CREATE INDEX idx_resultado_puesto_puesto
-ON resultado_puesto (puesto_id);
 
-CREATE INDEX idx_resultado_puesto_candidato
-ON resultado_puesto (candidato);
+CREATE INDEX idx_rp_anio
+ON resultado_puesto (anio_eleccion);
+
+CREATE INDEX idx_rp_geo
+ON resultado_puesto (cod_departamento, cod_municipio);
+
+CREATE INDEX idx_rp_puesto
+ON resultado_puesto (cod_puesto);
+
+CREATE INDEX idx_rp_candidato
+ON resultado_puesto (cod_candidato);

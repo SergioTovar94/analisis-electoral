@@ -14,6 +14,8 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./sql:/docker-entrypoint-initdb.d 
+      - ./sql:/sql
+      - ./data_processed:/data
 
   python:
     build: .

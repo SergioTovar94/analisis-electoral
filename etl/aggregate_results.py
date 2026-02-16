@@ -1,6 +1,5 @@
 import polars as pl
 import psycopg2
-from sqlalchemy import create_engine, text
 from pathlib import Path
 
 DB_URL = "postgresql://postgres:postgres@postgres:5432/analisis_electoral"
@@ -25,11 +24,19 @@ def aggregate_by_puesto(df: pl.DataFrame) -> pl.DataFrame:
         "departamento",
         "cod_municipio",
         "municipio",
+        "cod_zona",
+        "cod_comuna",
+        "comuna",
         "cod_puesto",
         "puesto_votacion",
+        "mesa",
+        "cod_partido",
+        "partido",
         "cod_candidato",
         "candidato",
         "votos",
+        "_dataset",
+        "_archivo_fuente",
     }
 
     missing = required_cols - set(df.columns)
@@ -38,7 +45,10 @@ def aggregate_by_puesto(df: pl.DataFrame) -> pl.DataFrame:
 
     return (
         df
-        .with_columns(pl.col("votos").cast(pl.Int64))
+        .with_columns(
+            pl.col("votos").cast(pl.Int64),
+            pl.col("anio_eleccion").cast(pl.Int32),
+        )
         .group_by(
             [
                 "anio_eleccion",
@@ -46,27 +56,50 @@ def aggregate_by_puesto(df: pl.DataFrame) -> pl.DataFrame:
                 "departamento",
                 "cod_municipio",
                 "municipio",
+                "cod_zona",
+                "cod_comuna",
+                "comuna",
                 "cod_puesto",
                 "puesto_votacion",
+                "mesa",
+                "cod_partido",
+                "partido",
                 "cod_candidato",
                 "candidato",
+                "_dataset",
+                "_archivo_fuente",
             ]
         )
         .agg(pl.sum("votos").alias("votos_totales"))
-        .sort(
+        .select(
             [
                 "anio_eleccion",
+                "cod_departamento",
                 "departamento",
+                "cod_municipio",
                 "municipio",
+                "cod_zona",
+                "cod_comuna",
+                "comuna",
+                "cod_puesto",
                 "puesto_votacion",
-                "votos_totales",
-            ],
-            descending=[False, False, False, False, True],
+                "mesa",
+                "cod_partido",
+                "partido",
+                "cod_candidato",
+                "candidato",
+                "votos_totales",      # 👈 entero donde corresponde
+                "_dataset",
+                "_archivo_fuente",
+            ]
         )
     )
 
 
-def save_to_postgres_copy(df: pl.DataFrame, table_name: str = "resultado_puesto"):
+def save_to_postgres_copy(
+    df: pl.DataFrame,
+    table_name: str = "resultado_puesto",
+):
     print("🧹 Escribiendo CSV temporal para COPY...")
     df.write_csv(TMP_CSV)
 
@@ -75,7 +108,7 @@ def save_to_postgres_copy(df: pl.DataFrame, table_name: str = "resultado_puesto"
     cur = conn.cursor()
 
     try:
-        print(f"🧹 TRUNCATE {table_name}")
+        print(f"🗑️  TRUNCATE TABLE {table_name}")
         cur.execute(f"TRUNCATE TABLE {table_name}")
 
         print("🚀 Ejecutando COPY FROM STDIN...")
@@ -88,24 +121,33 @@ def save_to_postgres_copy(df: pl.DataFrame, table_name: str = "resultado_puesto"
                     departamento,
                     cod_municipio,
                     municipio,
+                    cod_zona,
+                    cod_comuna,
+                    comuna,
                     cod_puesto,
                     puesto_votacion,
+                    mesa,
+                    cod_partido,
+                    partido,
                     cod_candidato,
                     candidato,
-                    votos_totales
+                    votos_totales,
+                    dataset,
+                    archivo_fuente
                 )
                 FROM STDIN WITH CSV HEADER
                 """,
-                f
+                f,
             )
 
         conn.commit()
-        print("✅ COPY finalizado correctamente")
+        print("✅ TRUNCATE + COPY finalizado correctamente")
 
     finally:
         cur.close()
         conn.close()
         Path(TMP_CSV).unlink(missing_ok=True)
+
 
 
 def run():

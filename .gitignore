@@ -19,9 +19,8 @@ __pycache__/
 # ======================
 # Datos (NO versionar)
 # ======================
-/data_raw/
-/data_processed/
-/data_temp/
+
+data/
 
 # ======================
 # Logs / temporales

@@ -11,8 +11,8 @@ COPY (
             anio_eleccion,
             SUM(votos_totales) AS votos
         FROM resultado_puesto
-        WHERE candidato ILIKE '%Robledo%'
-          AND anio_eleccion IN (2018, 2022)
+        WHERE candidato ILIKE '%YEILOR%'
+          AND anio_eleccion IN (2022, 2023)
         GROUP BY
             cod_departamento,
             departamento,
@@ -31,7 +31,7 @@ COPY (
         HAVING COUNT(DISTINCT anio_eleccion) = 2
     )
     SELECT
-        'ROBLED0' AS candidato,
+        'YEILOR' AS candidato,
         v.cod_departamento,
         v.departamento,
         v.cod_municipio,
@@ -41,24 +41,24 @@ COPY (
         v.puesto_votacion,
 
         SUM(
-            CASE WHEN v.anio_eleccion = 2018
+            CASE WHEN v.anio_eleccion = 2022
             THEN v.votos ELSE 0 END
         )
         -
         SUM(
-            CASE WHEN v.anio_eleccion = 2022
+            CASE WHEN v.anio_eleccion = 2023
             THEN v.votos ELSE 0 END
         ) AS votos_perdidos,
 
         SUM(
-            CASE WHEN v.anio_eleccion = 2018
-            THEN v.votos ELSE 0 END
-        ) AS votos_2018,
-
-        SUM(
             CASE WHEN v.anio_eleccion = 2022
             THEN v.votos ELSE 0 END
-        ) AS votos_2022
+        ) AS votos_2022,
+
+        SUM(
+            CASE WHEN v.anio_eleccion = 2023
+            THEN v.votos ELSE 0 END
+        ) AS votos_2023
 
     FROM votos_por_puesto_anio v
     JOIN puestos_con_votos_ambos_anios p
@@ -72,5 +72,5 @@ COPY (
         v.cod_puesto,
         v.puesto_votacion
     ORDER BY votos_perdidos DESC
-) TO '/data/rankings/robledo_perdida.csv'
+) TO '/data/rankings/yeilor_perdida.csv'
 WITH CSV HEADER;

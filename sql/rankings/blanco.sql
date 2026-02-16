@@ -1,15 +1,27 @@
-\copy (
+COPY(
     SELECT
         'EN BLANCO' AS candidato,
+        v.anio_eleccion,
+        v.cod_departamento,
         v.departamento,
+        v.cod_municipio,
         v.municipio,
+        v.cod_zona,
+        v.cod_puesto,
         v.puesto_votacion,
-        SUM(v.votos_totales) AS votos_nulos_totales,
-        SUM(CASE WHEN v.anio_eleccion = 2018 THEN v.votos_totales ELSE 0 END) AS votos_2018,
-        SUM(CASE WHEN v.anio_eleccion = 2022 THEN v.votos_totales ELSE 0 END) AS votos_2022
+        SUM(v.votos_totales) AS votos_totales
     FROM resultado_puesto v
-    WHERE candidato ILIKE '%EN BLANCO%'
-      AND anio_eleccion IN (2018, 2022)
-    GROUP BY v.departamento, v.municipio, v.puesto_votacion
-    ORDER BY votos_nulos_totales DESC
-) TO '/data/rankings/votos_blanco.csv' WITH CSV HEADER;
+    WHERE v.candidato ILIKE '%EN BLANCO%'
+      AND v.anio_eleccion IN (2018, 2022)
+    GROUP BY
+        v.anio_eleccion,
+        v.cod_departamento,
+        v.departamento,
+        v.cod_municipio,
+        v.municipio,
+        v.cod_zona,
+        v.cod_puesto,
+        v.puesto_votacion
+    ORDER BY votos_totales DESC
+) TO '/data/rankings/votos_blanco.csv'
+WITH CSV HEADER;

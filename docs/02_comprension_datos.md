@@ -1,8 +1,14 @@
-# Paso 1 – Modelo de Datos
+# Fase 2 – Comprensión de los Datos
 
-## 1. Principios de diseño
+## 2.1. Datos disponibles
+
+- Resultados electorales mesa a mesa
+- Formatos: CSV y Excel
+- Volumen aproximado: ~1 millón de registros por elección
+- Cobertura nacional (se filtrará Cundinamarca)
 
 El modelo de datos está orientado a:
+
 - Comparar resultados entre elecciones
 - Realizar agregaciones por puesto de votación
 - Minimizar el volumen de datos para análisis

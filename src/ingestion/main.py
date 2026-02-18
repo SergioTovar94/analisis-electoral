@@ -34,13 +34,14 @@ def ingestion_main():
         elif opcion == "2":
             print("Transformando archivos a Parquet...")
             for _, meta in RAW_DATASETS.items():
+                path = meta["path"]
+                output_path = DATA_SILVER / f"{path.stem}.parquet"
                 try:
-                    path = meta["path"]
-                    output_path = DATA_SILVER / f"{path.stem}.parquet"
+                    print(f"Procesando archivo: {path.name}")
                     normalize_and_store(meta, output_path)
                 except Exception as e:
                     raise RuntimeError(
-                        f"Error procesando archivo: {meta['file_name']}"
+                        f"Error procesando archivo: {meta['path']}"
                     ) from e
             break
         else:

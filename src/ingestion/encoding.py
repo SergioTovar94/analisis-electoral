@@ -5,11 +5,12 @@ y determinar el encoding más probable, junto con un nivel de confianza.
 Esto es útil para manejar archivos con encodings desconocidos o mixtos,
 especialmente en contextos de análisis de datos donde la calidad de los archivos puede variar.    
 """
+import csv
 from pathlib import Path
 from typing import List, Dict, Union
 import polars as pl
-import csv
 import chardet
+
 
 def detect_encoding(
     file_path: Union[str, Path],
@@ -75,25 +76,24 @@ def convert_to_utf8(
     output_path: Union[str, Path] | None = None,
     chunk_size: int = 1024 * 1024  # 1 MB
 ) -> Path:
+    """Convierte un archivo a UTF-8 leyendo en bloques para manejar archivos grandes.
     """
-    Convierte un archivo grande a UTF-8 sin cargarlo completo en memoria.
-    """
-    input_path = Path(input_path)
 
+    input_path = Path(input_path)
     if output_path is None:
         output_path = input_path.with_suffix(".utf8.csv")
     else:
         output_path = Path(output_path)
-
-    with open(input_path, "r", encoding=source_encoding, errors="strict") as f_in, \
+    print(f"Convirtiendo {input_path.name} de {source_encoding} a UTF-8...")
+    with open(input_path, "rb") as f_in, \
          open(output_path, "w", encoding="utf8") as f_out:
-
         while True:
             chunk = f_in.read(chunk_size)
             if not chunk:
                 break
-            f_out.write(chunk)
-
+            text = chunk.decode(source_encoding)
+            f_out.write(text)
+    print("\rProgreso: 100.00% ✔")
     return output_path
 
 def normalize_and_store(meta, silver_dir):
@@ -103,7 +103,9 @@ def normalize_and_store(meta, silver_dir):
 
     if encoding.lower() != "utf8":
         input_path = convert_to_utf8(input_path, encoding)
+        encoding = "utf8"
+    schema = meta.get("schema_overrides", {})
     (
-        pl.scan_csv(input_path)
+        pl.scan_csv(input_path, encoding=encoding,schema_overrides=schema)
         .sink_parquet(silver_dir)
     )

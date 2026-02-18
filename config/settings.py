@@ -4,6 +4,8 @@ Este archivo define las rutas de los datasets, así como parámetros de transfor
 Aquí se centralizan las configuraciones para facilitar su mantenimiento y actualización.
 """
 from pathlib import Path
+import polars as pl
+
 
 PROJECT_ROOT = Path(__file__).parent.parent
 DATA_RAW = PROJECT_ROOT / "data" / "raw"
@@ -17,7 +19,10 @@ RAW_DATASETS = {
     "senado_2018": {
         "path" : DATA_RAW / "2018" / "2018_SENADO.csv",
         "type": "csv",
-        "encoding": "utf16"
+        "encoding": "utf16",
+        "schema_overrides": {
+            "COD_PP": pl.Utf8,
+            }
         },
     "presidencia_2018_1v": {
         "path" : DATA_RAW / "2018" / "MMV_NACIONAL_PRESIDENTE_2018_1v.csv",
@@ -32,7 +37,10 @@ RAW_DATASETS = {
     "centro_esperanza_2022": {
         "path" : DATA_RAW / "2022" / "2022_CONSULTA_CENTRO_ESPERANZA.csv",
         "type": "csv",
-        "encoding": "utf16"
+        "encoding": "utf16",
+        "schema_overrides": {
+            "COD_PP": pl.Utf8,
+            }
         },
     "senado_2022": {
         "path" : DATA_RAW / "2022" / "2022_SENADO.csv",

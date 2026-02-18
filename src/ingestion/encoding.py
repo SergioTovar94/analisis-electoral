@@ -7,6 +7,7 @@ especialmente en contextos de análisis de datos donde la calidad de los archivo
 """
 from pathlib import Path
 from typing import List, Dict, Union
+import polars as pl
 import csv
 import chardet
 
@@ -67,3 +68,42 @@ def save_encoding_report(
         )
         writer.writeheader()
         writer.writerows(results)
+
+def convert_to_utf8(
+    input_path: Union[str, Path],
+    source_encoding: str,
+    output_path: Union[str, Path] | None = None,
+    chunk_size: int = 1024 * 1024  # 1 MB
+) -> Path:
+    """
+    Convierte un archivo grande a UTF-8 sin cargarlo completo en memoria.
+    """
+    input_path = Path(input_path)
+
+    if output_path is None:
+        output_path = input_path.with_suffix(".utf8.csv")
+    else:
+        output_path = Path(output_path)
+
+    with open(input_path, "r", encoding=source_encoding, errors="strict") as f_in, \
+         open(output_path, "w", encoding="utf8") as f_out:
+
+        while True:
+            chunk = f_in.read(chunk_size)
+            if not chunk:
+                break
+            f_out.write(chunk)
+
+    return output_path
+
+def normalize_and_store(meta, silver_dir):
+    """Toma un archivo CSV, lo normaliza a UTF-8 si es necesario y lo guarda en formato Parquet."""
+    input_path = Path(meta["path"])
+    encoding = meta.get("encoding", "utf8")
+
+    if encoding.lower() != "utf8":
+        input_path = convert_to_utf8(input_path, encoding)
+    (
+        pl.scan_csv(input_path)
+        .sink_parquet(silver_dir)
+    )

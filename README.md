@@ -5,7 +5,7 @@ cuyo objetivo es identificar y rankear puestos de votación según distintos cri
 estratégicos (pérdida de votos, votos nulos, fortalezas históricas).
 
 El sistema procesa resultados electorales mesa a mesa provenientes de archivos
-CSV y Excel, los normaliza, valida su calidad y genera agregaciones por puesto de
+CSV (no Excel), los normaliza, valida su calidad y genera agregaciones por puesto de
 votación para permitir análisis comparativos entre distintas elecciones.
 
 ## Objetivos del sistema
@@ -28,4 +28,3 @@ votación para permitir análisis comparativos entre distintas elecciones.
 - Coordinadores de datos de campaña
 - Equipos territoriales
 - Analistas políticos
-

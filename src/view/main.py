@@ -3,10 +3,9 @@ Muestra el flujo principal del proyecto, integrando EDA, transformaciones y cons
 Este archivo es el punto de entrada para ejecutar todo el proceso de análisis de datos.
 """
 
-from src.parquet.main import parquet_main
+from src.ingestion.main import ingestion_main
 from src.eda.main import eda_main
 from src.transformation.main import transformations_main
-from src.utils.main import utils_main
 
 def main():
     """
@@ -16,11 +15,10 @@ def main():
 
 
     menu = {
-        "1": "Conversión de datos a Parquet",
+        "1": "Preparación de datasets",
         "2": "Análisis Exploratorio de Datos (EDA)",
         "3": "Transformaciones",
         "4": "Consultas",
-        "5": "Utilidades"
     }
 
     while True:
@@ -37,12 +35,10 @@ def main():
             print("\033[H\033[J", end="")
             print("="*10, f"{menu[option]}","="*10)
             if option == "1":
-                parquet_main()
+                ingestion_main()
             elif option == "2":
                 eda_main()
             elif option == "3":
                 transformations_main()
             elif option == "4":
                 print("Consultas aún no implementadas.")
-            elif option == "5":
-                utils_main()

@@ -20,8 +20,9 @@ RAW_DATASETS = {
         "encoding": "utf16"
         },
     "presidencia_2018_1v": {
-        "path" : DATA_RAW / "2018" / "MMV_NACIONAL_PRESIDENTE_2018_1v.xlsx",
-        "type": "xlsx"
+        "path" : DATA_RAW / "2018" / "MMV_NACIONAL_PRESIDENTE_2018_1v.csv",
+        "type": "csv",
+        "encoding": "utf8"
         },
     "camara_2022": {
         "path" : DATA_RAW / "2022" / "2022_CAMARA.csv",

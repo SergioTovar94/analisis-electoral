@@ -9,24 +9,9 @@ from typing import Union
 import polars as pl
 
 def read_csv_lazy(
-        file_path: Union[str, Path],
-        encoding: str = "utf8"
-        ) -> pl.LazyFrame:
+        file_path: Union[str, Path]) -> pl.LazyFrame:
     """Lee un CSV en modo Lazy (apto para archivos grandes)."""
-    if encoding.lower() == "utf8":
-        return pl.scan_csv(file_path)
-    df = pl.read_csv(file_path, encoding=encoding)
-    return df.lazy()
-
-def read_excel_lazy(file_path: Union[str, Path]) -> pl.LazyFrame:
-    """
-    Lee un Excel y devuelve un LazyFrame.
-    NOTA: pl.read_excel es eager (carga en memoria), pero podemos convertirlo a lazy.
-    Para archivos muy grandes (>1M filas) considera convertir el Excel a CSV primero.
-    """
-    # Carga eager, pero luego lazy
-    df = pl.read_excel(file_path)
-    return df.lazy()
+    return pl.scan_csv(file_path)
 
 def write_parquet(lf: pl.LazyFrame, output_path: Union[str, Path]) -> None:
     """

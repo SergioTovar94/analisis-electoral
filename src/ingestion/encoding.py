@@ -12,7 +12,7 @@ import polars as pl
 import chardet
 
 
-def detect_encoding(
+def detect_file_properties(
     file_path: Union[str, Path],
     sample_size: int = 100_000
 ) -> Dict[str, str]:
@@ -40,12 +40,25 @@ def detect_encoding(
 
     with file_path.open("rb") as f:
         raw_data = f.read(sample_size)
-    result = chardet.detect(raw_data)
+
+    encoding_result = chardet.detect(raw_data)
+    encoding = encoding_result.get("encoding")
+
+    try:
+        sample_text = raw_data.decode(encoding)
+    except Exception:
+        sample_text = raw_data.decode("utf-8", errors="ignore")
+    try:
+        dialect = csv.Sniffer().sniff(sample_text)
+        delimiter = dialect.delimiter
+    except Exception:
+        delimiter = "unknown"
 
     return {
         "file": file_path.name,
-        "encoding": result.get("encoding"),
-        "confidence": result.get("confidence"),
+        "encoding": encoding,
+        "confidence": encoding_result.get("confidence"),
+        "delimiter": delimiter,
     }
 
 def save_encoding_report(
@@ -65,7 +78,7 @@ def save_encoding_report(
     with output_path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
-            fieldnames=["file", "encoding", "confidence"]
+            fieldnames=["file", "encoding", "confidence", "delimiter"]
         )
         writer.writeheader()
         writer.writerows(results)
@@ -106,6 +119,6 @@ def normalize_and_store(meta, silver_dir):
         encoding = "utf8"
     schema = meta.get("schema_overrides", {})
     (
-        pl.scan_csv(input_path, encoding=encoding,schema_overrides=schema)
+        pl.scan_csv(input_path, encoding=encoding,schema_overrides=schema, separator=meta.get("delimiter", ","))
         .sink_parquet(silver_dir)
     )

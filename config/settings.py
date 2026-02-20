@@ -10,9 +10,12 @@ import polars as pl
 PROJECT_ROOT = Path(__file__).parent.parent
 DATA_RAW = PROJECT_ROOT / "data" / "raw"
 DATA_SILVER = PROJECT_ROOT / "data" / "silver"
+DATA_EDA = PROJECT_ROOT / "data" / "eda"
 DATA_PROCESSED = PROJECT_ROOT / "data" / "processed"
 DATA_OUTPUTS = PROJECT_ROOT / "data" / "curated"
+DATA_TRANSFORMED = PROJECT_ROOT / "data" / "transformed"
 DATA_UTILS = PROJECT_ROOT / "data" / "utils"
+COLUMN_MAPPING = DATA_UTILS / "column_mapping.json"
 
 # Diccionario de datasets raw
 RAW_DATASETS = {
@@ -20,6 +23,7 @@ RAW_DATASETS = {
         "path" : DATA_RAW / "2018" / "2018_SENADO.csv",
         "type": "csv",
         "encoding": "utf16",
+        "delimiter": ",",
         "schema_overrides": {
             "COD_PP": pl.Utf8,
             }
@@ -27,17 +31,23 @@ RAW_DATASETS = {
     "presidencia_2018_1v": {
         "path" : DATA_RAW / "2018" / "MMV_NACIONAL_PRESIDENTE_2018_1v.csv",
         "type": "csv",
-        "encoding": "utf8"
+        "delimiter": ";",
+        "encoding": "utf8",
+        "schema_overrides": {
+            "PSTO": pl.Utf8,
+            }
         },
     "camara_2022": {
         "path" : DATA_RAW / "2022" / "2022_CAMARA.csv",
         "type": "csv",
+        "delimiter": ";",
         "encoding": "utf8"
         },
     "centro_esperanza_2022": {
         "path" : DATA_RAW / "2022" / "2022_CONSULTA_CENTRO_ESPERANZA.csv",
         "type": "csv",
         "encoding": "utf16",
+        "delimiter": ",",
         "schema_overrides": {
             "COD_PP": pl.Utf8,
             }
@@ -45,14 +55,14 @@ RAW_DATASETS = {
     "senado_2022": {
         "path" : DATA_RAW / "2022" / "2022_SENADO.csv",
         "type": "csv",
+        "delimiter": ",",
         "encoding": "utf16"
         },
     "territoriales_2023": {
         "path" : DATA_RAW / "2023" / "MMV_2023_15_CUNDINAMARCA.csv",
         "type": "csv",
+        "delimiter": ",",
         "encoding": "utf8"
         },
     }
 
-# Parámetros de transformación
-DROP_COLUMNS = {...}  # config específica

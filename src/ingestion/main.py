@@ -5,8 +5,8 @@ transformarla y convertir los datasets en formato CSV a Parquet, optimizando el 
 velocidad de lectura para futuros análisis.
 """
 
-from config.settings import RAW_DATASETS, DATA_SILVER
-from .encoding import detect_encoding, save_encoding_report, normalize_and_store
+from config.settings import RAW_DATASETS, DATA_UTILS, DATA_SILVER
+from .encoding import detect_file_properties, save_encoding_report, normalize_and_store
 
 def ingestion_main():
     """
@@ -29,8 +29,8 @@ def ingestion_main():
             results = []
             for _, meta in RAW_DATASETS.items():
                 path = meta["path"]
-                results.append(detect_encoding(path))
-            save_encoding_report(results, DATA_SILVER / "encoding_report.csv")
+                results.append(detect_file_properties(path))
+            save_encoding_report(results, DATA_UTILS / "encoding_report.csv")
         elif opcion == "2":
             print("Transformando archivos a Parquet...")
             for _, meta in RAW_DATASETS.items():
